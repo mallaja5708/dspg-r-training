@@ -11,6 +11,11 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r setting wd}
+library(rstudioapi)
+setwd(dirname(getActiveDocumentContext()$path))
+```
+
 ## Intro to markdown
 
 Markdown allows you to do all things like **bold**, *italic*, `code font`, and more!
@@ -55,7 +60,63 @@ temp <- c(1, 2, 3)
 ```
 
 
+```{r make_cats}
+cats <- data.frame(coat = c("calico", "black", "tabby"), 
+                   weight= c(2.1, 5.0, 3.2), 
+                   likes_string = c(1, 0, 1))
+write.csv(x = cats, file="data/feline-data.csv", row.names=FALSE)
+```
 
+```{r read_cats}
+cats2 <- read.csv("data/feline-data.csv", stringsAsFactors = TRUE)
+str(cats)
+cats$weight <- cats$weight + 1
+```
+
+
+Creating vector and coercing types
+
+```{r}
+my_vec <- vector(mode="character", length=3)
+combine_vector <- c(1, 2, "bananas")
+```
+
+change names
+
+```{r}
+names(cats)[3] <- "likes_hunting"
+```
+
+
+Add columns and rows to a df
+```{r}
+cats <- read.csv("data/feline-data.csv")
+age <- c(2, 3, 5)
+cats <- cbind(cats, age)
+newRow <- list("tortoiseshell", 3.3, TRUE, 9)
+cats <- rbind(cats, newRow)
+```
+
+
+```{r}
+human_age <- cats$age * 7
+human_age <- as.factor(human_age)
+human_age <- as.numeric(as.character(human_age))
+human_age <- human_age / 7
+```
+
+```{r}
+cats$coat <- as.factor(cats$coat)
+cats <- rbind(cats, c("white", 3.4, 0, 1))
+cats <- rbind(cats, c("white", 3.4, 0, 1))
+cats <- cats[-(5:6),]
+
+cats <- na.omit(cats)
+# cats[,-4] Removes column
+
+drop <- names(cats) %in% c("weight")
+cats[,!drop]
+```
 
 
 
