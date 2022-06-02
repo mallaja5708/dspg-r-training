@@ -1,0 +1,67 @@
+---
+title: "R Practice"
+author: "JAM"
+date: "6/2/2022"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Intro to markdown
+
+Markdown allows you to do all things like **bold**, *italic*, `code font`, and more!
+
+Make a list with asterisks like:
+
+-   bold with double-asterisk
+-   italics with underscores
+-   code-type font with backticks (\`\`)
+
+You can also use hyphens instead of asterisks.
+
+For a numbered list:
+
+1.  bold......
+2.  italics...
+3.  code......
+
+Hyperlinks are like [Hyperlinked text](https://mylink.org)
+
+
+Load gapminder data along with plotting package.
+
+```{r load-data}
+# This line will not run
+library(dplyr)
+library(gapminder) # This chunk of this line will not run
+library(ggplot2)
+gap <- gapminder
+```
+
+
+Plot the data
+
+```{r make-plot}
+plot(lifeExp ~ year, data = gap)
+```
+
+
+```{r}
+temp <- c(1, 2, 3)
+```
+
+
+
+
+
+
+
+
+
+
+
+
