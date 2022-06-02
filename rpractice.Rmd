@@ -119,6 +119,171 @@ cats[,!drop]
 ```
 
 
+```{r}
+library(readxl)
+gapminder <- read_excel("data/gapminder_data.xlsx")
+
+```
+
+Inspecting a dataframe
+
+```{r}
+summary(gapminder)
+summary(gapminder$lifeExp)
+
+gapminder$country <- factor(gapminder$country)
+gapminder$continent <- factor(gapminder$continent)
+summary(gapminder)
+
+length(gapminder) #ncol(gapminder) works
+nrow(gapminder)
+colnames(gapminder)
+
+head(gapminder, n = 6) #tail is opposite
+
+gapminder[sample(nrow(gapminder), 10), ]
+
+gapminder[1:10, 2:5]
+```
+
+```{r}
+x <- c(5.4, 6.2, 7.1, 4.8, 7.5)
+names(x) <- c("a", "b", "c", "d", "e")
+
+x[c(1, 3)] # discrete items
+x[1:3] # slice
+x[c(1, 1, 3)]
+x[6] #NA - beyond the end
+x[(-c(1, 4))]
+x[-1:3] # this would go from -1, 0, 1, 2, 3 which is wrong
+# by name
+x[c("a", "c")]
+
+
+x <- c(5.4, 6.2, 7.1, 4.8, 7.5)
+names(x) <- c("a", "b", "c", "d", "e")
+x[x>7 & x < 7.5] # and
+x[x>7 | x < 7.5] # or
+
+x2 <- 1:3
+names(x2) <- c("a", "a" ,"a")
+x2["a"] # duplicate names are possible but not advisible
+
+x
+x[!names(x) %in% c("a", "c")]
+
+
+```
+
+Select southeast Asian countries
+
+
+```{r}
+seAsia <- c("Myanmar", "Thialand", "Cambodia", "Vietnam", "Laos")
+seAsia_gap <- gapminder[which(gapminder$country %in% seAsia), ]
+```
+
+
+```{r}
+gap_60s <- gapminder[gapminder$year %in% 1960:1969,]
+```
+
+
+**PICTURES!!!!!**
+
+```{r}
+library(ggplot2)
+ggplot(data = gapminder, mapping = aes(x = gdpPercap, y=lifeExp)) + geom_point()
+```
+
+```{r}
+# This creates the framework, but doesn't know what to plot
+ggplot(data=gapminder, mapping = aes(x=gdpPercap, y = lifeExp))
+```
+
+
+```{r}
+ggplot(data=gapminder, mapping = aes(x=year, y = lifeExp)) + geom_point()
+```
+
+Lines! 
+
+```{r}
+ggplot(data=gapminder, mapping = aes(x=year, y=lifeExp, color=continent)) + geom_line()
+```
+
+Lines that makes a little sense
+
+```{r}
+ggplot(data=gapminder, mapping=aes(x=year, y=lifeExp, by=country)) + geom_line(mapping = aes(color=continent)) + geom_point(color="yellow")
+```
+
+
+```{r}
+logged_points <- ggplot(gapminder, mapping = aes(x=gdpPercap, y=lifeExp)) + geom_point() + scale_x_log10()
+logged_points <- logged_points + geom_smooth(method='loess')
+logged_points
+```
+
+
+```{r}
+americas <- gapminder[gapminder$continent == "Americas",]
+
+ggplot(data=americas, mapping = aes(x=year, y=lifeExp)) + geom_line() + facet_wrap(~ country) + theme(axis.text.x = element_text(angle=45))
+
+ggsave(filename="results/lifeExp_americas.png")
+```
+
+
+Save Americas!
+
+```{r}
+write.csv(file = "clean_data/americas_gap.csv", x = americas, row.names=FALSE)
+```
+
+Dplyr!
+
+```{r}
+mean(gapminder[gapminder$continent == "Africa",]$gdpPercap)
+```
+
+
+```{r}
+library(dplyr)
+year_country_gdp <- select(gapminder, year, country, gdpPercap)
+str(year_country_gdp)
+smaller_gap <- gapminder %>% select(-continent) %>% rename(gdp_per_capita = gdpPercap)
+```
+
+
+```{r}
+y_cntr_gdp_eur <- gapminder %>% filter(continent=="Europe") %>% select(year, country, gdpPercap)
+
+```
+
+
+Combine with grouping
+
+```{r}
+gapminder %>% group_by(continent, year) %>% summarize(mean_gdpPercap = mean(gdpPercap), 
+                                                sd_gdpPercap = sd(gdpPercap), 
+                                                mean_raw_gdp = mean(gdpPercap*pop), 
+                                                tot_raw_gdp = sum(gdpPercap*pop))
+```
+
+Mutate!
+
+```{r}
+gapminder %>% mutate(gdp_billion = gdpPercap*pop/10^9) %>%
+  group_by(continent, year) %>% 
+  summarize(mean_gdp_billion = mean(gdp_billion))
+```
+
+Combine with ggplot
+```{r}
+gapminder %>% filter(continent =="Americas") %>% 
+  ggplot(mapping = aes(x=year, y=lifeExp)) + geom_line() + facet_wrap( ~ country) + theme(axis.text.x = element_text(angle=45))
+```
 
 
 
